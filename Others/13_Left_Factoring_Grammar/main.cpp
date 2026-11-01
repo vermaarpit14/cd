@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(){string line;cout<<"Enter production (example A->abc|abd|ae): ";cin>>line;auto k=line.find("->");if(k==string::npos){cout<<"Invalid production\n";return 1;}string lhs=line.substr(0,k),rhs=line.substr(k+2);vector<string> v;stringstream ss(rhs);string x;while(getline(ss,x,'|'))v.push_back(x);if(v.size()<2){cout<<"No factoring needed\n";return 0;}string pre=v[0];for(auto&s:v){size_t i=0;while(i<pre.size()&&i<s.size()&&pre[i]==s[i])++i;pre.resize(i);}if(pre.empty()){cout<<"No common prefix found\n";return 0;}cout<<lhs<<" -> "<<pre<<lhs<<"'\n"<<lhs<<"' -> ";for(size_t i=0;i<v.size();i++){if(i)cout<<" | ";string suffix=v[i].substr(pre.size());cout<<(suffix.empty()?"#":suffix);}cout<<'\n';}

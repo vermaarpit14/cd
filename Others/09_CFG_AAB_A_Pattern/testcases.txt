@@ -1,0 +1,2 @@
+Accepted: aaba, aabaabaa, aabaabaabaaa
+Rejected: aab, aabaa, aabaaba

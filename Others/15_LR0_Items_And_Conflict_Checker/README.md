@@ -1,0 +1,1 @@
+Enter number of production lines, productions, and start symbol. Nonterminals are uppercase single letters; `#` denotes epsilon. Program prints canonical LR(0) item sets, transitions, and LR(0) conflicts.

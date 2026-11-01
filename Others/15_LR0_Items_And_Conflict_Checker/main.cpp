@@ -1,0 +1,12 @@
+#include <bits/stdc++.h>
+using namespace std;
+struct P{char l;string r;};struct I{int p,d;bool operator<(I const&o)const{return tie(p,d)<tie(o.p,o.d);}bool operator==(I const&o)const{return p==o.p&&d==o.d;}};
+int main(){int n;if(!(cin>>n))return 0;vector<P> g;set<char> nts,terms;string line;for(int i=0;i<n;i++){cin>>line;int k=line.find("->");char l=line[0];nts.insert(l);stringstream ss(line.substr(k+2));string x;while(getline(ss,x,'|'))g.push_back({l,x=="#"?"":x});}char start;cin>>start;for(auto&p:g)for(char c:p.r)if(!nts.count(c))terms.insert(c);g.insert(g.begin(),{'@',string(1,start)});
+ auto closure=[&](set<I> s){bool change=true;while(change){change=false;vector<I> add;for(auto it:s)if(it.d<(int)g[it.p].r.size()){char X=g[it.p].r[it.d];if(nts.count(X))for(int j=1;j<(int)g.size();j++)if(g[j].l==X){I q{j,0};if(!s.count(q))add.push_back(q);}}for(auto q:add)change|=s.insert(q).second;}return s;};
+ auto go=[&](const set<I>&s,char X){set<I> z;for(auto it:s)if(it.d<(int)g[it.p].r.size()&&g[it.p].r[it.d]==X)z.insert({it.p,it.d+1});return closure(z);};
+ vector<set<I>> states;map<set<I>,int> id;map<pair<int,char>,int> trans;states.push_back(closure({{0,0}}));id[states[0]]=0;for(size_t i=0;i<states.size();i++){set<char> syms;for(auto it:states[i])if(it.d<(int)g[it.p].r.size())syms.insert(g[it.p].r[it.d]);for(char X:syms){auto z=go(states[i],X);if(!id.count(z)){int j=states.size();id[z]=j;states.push_back(z);}trans[{(int)i,X}]=id[z];}}
+ for(int i=0;i<(int)states.size();i++){cout<<"\nI"<<i<<":\n";for(auto it:states[i]){auto r=g[it.p].r;r.insert(it.d,".");cout<<g[it.p].l<<" -> "<<(r.empty()?".":r)<<'\n';}}
+ cout<<"\nTransitions:\n";for(auto &[k,v]:trans)cout<<"I"<<k.first<<" --"<<k.second<<"--> I"<<v<<'\n';
+ map<pair<int,char>,string> action;bool conflict=false;for(int i=0;i<(int)states.size();i++)for(auto it:states[i]){if(it.d<(int)g[it.p].r.size()){char a=g[it.p].r[it.d];if(!nts.count(a)){string val="s"+to_string(trans[{i,a}]);auto key=make_pair(i,a);if(action.count(key)&&action[key]!=val){cout<<"Conflict in I"<<i<<" on "<<a<<'\n';conflict=true;}else action[key]=val;}}else if(it.p==0)action[{i,'$'}]="acc";else for(char a:terms){string val="r"+to_string(it.p-1);auto key=make_pair(i,a);if(action.count(key)&&action[key]!=val){cout<<"Conflict in I"<<i<<" on "<<a<<" ("<<action[key]<<" vs "<<val<<")\n";conflict=true;}else action[key]=val;} }
+ cout<<(conflict?"\nGrammar is NOT LR(0) (conflict detected).\n":"\nNo LR(0) shift/reduce or reduce/reduce conflicts detected.\n");
+}

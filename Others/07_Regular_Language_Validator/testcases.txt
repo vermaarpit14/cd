@@ -1,0 +1,2 @@
+Accepted: b, ab, aaabbb
+Rejected: empty, a, ba, abbaba
